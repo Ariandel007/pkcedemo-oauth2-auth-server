@@ -13,6 +13,8 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 
 import java.security.KeyFactory;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
@@ -29,20 +31,36 @@ public class JwtConfig {
     private String PUBLIC_KEY_BASE64;
 
     @Bean
-    public JwtEncoder jwtEncoder() {
+    public JwtEncoder jwtEncoder() throws NoSuchAlgorithmException {
+//        RSAPrivateKey privateKey = getPrivateKey();
+//        RSAPublicKey publicKey = getPublicKey();
+//        String kid = generateKeyId(publicKey);
+//
+//        // Create an RSAKey
+//        RSAKey rsaKey = new RSAKey.Builder(publicKey)
+//                .privateKey(privateKey)
+//                .keyID(kid)
+//                .build();
+//
+//        // Create a JWKSource
+//        JWKSource<SecurityContext> jwkSource =
+//                (jwkSelector, securityContext) -> jwkSelector.select(new JWKSet(rsaKey));
+
+        return new NimbusJwtEncoder(jwkSource());
+    }
+
+    @Bean
+    public JWKSource<SecurityContext> jwkSource() throws NoSuchAlgorithmException {
         RSAPrivateKey privateKey = getPrivateKey();
         RSAPublicKey publicKey = getPublicKey();
+        String kid = generateKeyId(publicKey);
 
-        // Create an RSAKey
         RSAKey rsaKey = new RSAKey.Builder(publicKey)
                 .privateKey(privateKey)
+                .keyID(kid)  // Set your desired kid
                 .build();
-
-        // Create a JWKSource
-        JWKSource<SecurityContext> jwkSource =
-                (jwkSelector, securityContext) -> jwkSelector.select(new JWKSet(rsaKey));
-
-        return new NimbusJwtEncoder(jwkSource);
+        JWKSet jwkSet = new JWKSet(rsaKey);
+        return (jwkSelector, securityContext) -> jwkSelector.select(jwkSet);
     }
 
     @Bean
@@ -74,4 +92,12 @@ public class JwtConfig {
             throw new IllegalStateException("Failed to load public key", e);
         }
     }
+
+    public String generateKeyId(RSAPublicKey publicKey) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] encodedKey = publicKey.getEncoded();
+        byte[] hash = digest.digest(encodedKey);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
+    }
+
 }
