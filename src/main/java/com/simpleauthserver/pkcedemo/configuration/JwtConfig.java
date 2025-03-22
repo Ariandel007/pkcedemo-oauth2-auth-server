@@ -32,20 +32,6 @@ public class JwtConfig {
 
     @Bean
     public JwtEncoder jwtEncoder() throws NoSuchAlgorithmException {
-//        RSAPrivateKey privateKey = getPrivateKey();
-//        RSAPublicKey publicKey = getPublicKey();
-//        String kid = generateKeyId(publicKey);
-//
-//        // Create an RSAKey
-//        RSAKey rsaKey = new RSAKey.Builder(publicKey)
-//                .privateKey(privateKey)
-//                .keyID(kid)
-//                .build();
-//
-//        // Create a JWKSource
-//        JWKSource<SecurityContext> jwkSource =
-//                (jwkSelector, securityContext) -> jwkSelector.select(new JWKSet(rsaKey));
-
         return new NimbusJwtEncoder(jwkSource());
     }
 
