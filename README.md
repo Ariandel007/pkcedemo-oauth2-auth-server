@@ -1,3 +1,6 @@
+# Link of the resource server for this
+
+https://github.com/Ariandel007/demo-resource-server
 
 # OpenSSL to generate an RSA key pair (private and public keys) in PEM format
 
