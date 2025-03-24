@@ -85,6 +85,7 @@ public class AuthorizationServerConfig {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/webjars/**", "/images/**", "/css/**", "/assets/**", "/favicon.ico").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
@@ -98,12 +99,12 @@ public class AuthorizationServerConfig {
         return http.build();
     }
 
-    @Bean
-    WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.debug(false)
-                .ignoring()
-                .requestMatchers("/webjars/**", "/images/**", "/css/**", "/assets/**", "/favicon.ico");
-    }
+//    @Bean
+//    WebSecurityCustomizer webSecurityCustomizer() {
+//        return (web) -> web.debug(false)
+//                .ignoring()
+//                .requestMatchers("/webjars/**", "/images/**", "/css/**", "/assets/**", "/favicon.ico");
+//    }
 
     @Bean
     public RegisteredClientRepository registeredClientRepository() {

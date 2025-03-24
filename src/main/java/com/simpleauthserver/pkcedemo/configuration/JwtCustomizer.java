@@ -27,6 +27,9 @@ public class JwtCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> 
         } else if (authentication.getPrincipal() instanceof DefaultOidcUser oidcUser) { // oauth2 login
             // fetch user by email to obtain User object when principal is not already a User object
             String email = oidcUser.getEmail();
+            // Check if user exists in database
+            // If user does not exist, create a new user with that email
+            // If user exists, fetch user object
 
         }
 
