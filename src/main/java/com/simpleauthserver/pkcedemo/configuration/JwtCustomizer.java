@@ -2,6 +2,7 @@ package com.simpleauthserver.pkcedemo.configuration;
 
 import com.simpleauthserver.pkcedemo.service.CustomUserDetails;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.stereotype.Component;
@@ -23,6 +24,10 @@ public class JwtCustomizer implements OAuth2TokenCustomizer<JwtEncodingContext> 
             context.getClaims()
                     .claim("roles", roles)
                     .claim("user_id", userDetails.getId()); // Extrae el ID directamente
+        } else if (authentication.getPrincipal() instanceof DefaultOidcUser oidcUser) { // oauth2 login
+            // fetch user by email to obtain User object when principal is not already a User object
+            String email = oidcUser.getEmail();
+
         }
 
     }
